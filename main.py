@@ -1,16 +1,30 @@
-# This is a sample Python script.
+from selenium import webdriver
+from selenium.webdriver.common.by import By
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# Instantiate and add experimental_option()
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_experimental_option("detach", True)
 
+# Instantiate driver
+driver = webdriver.Chrome(options=chrome_options)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+# Open website with driver
+driver.get("https://www.python.org")
 
+# Find element
+upcoming_events_element = driver.find_element(By.CSS_SELECTOR, value=".event-widget")
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+events_menu_element = upcoming_events_element.find_element(By.CLASS_NAME, "menu")
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+menu_items = events_menu_element.find_elements(By.TAG_NAME, value="li")
+events_dic = {}
+index = 0
+for item in menu_items:
+    date = item.find_element(By.TAG_NAME, "time").get_attribute("datetime").split("T")[0]
+    name = item.find_element(By.TAG_NAME, "a").text
+    events_dic[index] = {"time": date, "name": name}
+    index += 1
+
+print(events_dic)
+
+driver.quit()
